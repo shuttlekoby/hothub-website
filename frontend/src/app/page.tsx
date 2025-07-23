@@ -2,7 +2,7 @@ import { client, cosplayersQuery, urlFor } from '@/lib/sanity'
 import { Card, CardBody, CardFooter, CardHeader } from '@heroui/card'
 import { Button } from '@heroui/button'
 import { Avatar } from '@heroui/avatar'
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem } from '@heroui/navbar'
+import Header from '@/components/Header'
 import Link from 'next/link'
 import React from 'react'
 import type { SanityImageSource } from '@sanity/image-url/lib/types/types'
@@ -109,39 +109,7 @@ export default async function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-100">
       {/* Navigation */}
-      <Navbar isBordered className="bg-white/70 backdrop-blur-md">
-        <NavbarBrand>
-          <p className="text-2xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
-            🌸 CosHub
-          </p>
-        </NavbarBrand>
-        <NavbarContent justify="end">
-          <NavbarItem>
-            <Button
-              as={Link}
-              href="/create"
-              color="primary"
-              variant="flat"
-              size="sm"
-              className="bg-gradient-to-r from-pink-500 to-purple-600 text-white"
-            >
-              クリエイト
-            </Button>
-          </NavbarItem>
-          <NavbarItem>
-            <Button
-              as={Link}
-              href="http://localhost:3333"
-              target="_blank"
-              color="secondary"
-              variant="flat"
-              size="sm"
-            >
-              Studio
-            </Button>
-          </NavbarItem>
-        </NavbarContent>
-      </Navbar>
+      <Header currentPage="home" />
 
       <main className="container mx-auto px-4 py-12">
         {/* Hero Section */}

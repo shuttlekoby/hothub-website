@@ -7,8 +7,8 @@ import { Input, Textarea } from '@heroui/input'
 import { Avatar } from '@heroui/avatar'
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from '@heroui/modal'
 import { Tabs, Tab } from '@heroui/tabs'
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem } from '@heroui/navbar'
-import Link from 'next/link'
+import Header from '@/components/Header'
+import { useRouter } from 'next/navigation'
 
 interface CosplayerData {
   name: string
@@ -29,6 +29,7 @@ interface DownloadProgress {
 }
 
 export default function CreatePage() {
+  const router = useRouter()
   const [cosplayerData, setCosplayerData] = useState<CosplayerData>({
     name: '',
     twitterUsername: '',
@@ -62,11 +63,9 @@ export default function CreatePage() {
     if (!username) return
 
     try {
-      // ここで実際のTwitter API or twitter-media-downloaderを呼び出す
-      // 現在はモックデータ
       setDownloadProgress({ ...downloadProgress, status: 'Fetching Twitter info...' })
       
-      await new Promise(resolve => setTimeout(resolve, 2000)) // モック遅延
+      await new Promise(resolve => setTimeout(resolve, 2000))
       
       setCosplayerData({
         ...cosplayerData,
@@ -99,8 +98,6 @@ export default function CreatePage() {
     })
 
     try {
-      // ここで実際のtwitter-media-downloaderを呼び出す
-      // サーバーサイドAPIエンドポイントを作成する必要がある
       const response = await fetch('/api/download-twitter-media', {
         method: 'POST',
         headers: {
@@ -112,29 +109,29 @@ export default function CreatePage() {
         })
       })
 
+      const result = await response.json()
+
       if (!response.ok) {
-        throw new Error('Download failed')
+        throw new Error(result.error || 'Download failed')
       }
 
-      // プログレス更新のシミュレーション
-      for (let i = 0; i <= downloadOptions.imageCount; i++) {
-        await new Promise(resolve => setTimeout(resolve, 100))
-        setDownloadProgress({
-          isDownloading: i < downloadOptions.imageCount,
-          progress: (i / downloadOptions.imageCount) * 100,
-          downloadedCount: i,
-          totalImages: downloadOptions.imageCount,
-          status: i < downloadOptions.imageCount ? `Downloading image ${i + 1}...` : 'Download completed!'
-        })
-      }
+      setDownloadProgress({
+        isDownloading: false,
+        progress: 100,
+        downloadedCount: result.downloadedCount,
+        totalImages: downloadOptions.imageCount,
+        status: result.mockMode ? 'Mock download completed!' : 'Download completed!'
+      })
 
       onOpen() // 完了モーダルを表示
-    } catch (error) {
+
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
       console.error('Download error:', error)
       setDownloadProgress({
         ...downloadProgress,
         isDownloading: false,
-        status: 'Download failed'
+        status: `Download failed: ${errorMessage}`
       })
     }
   }
@@ -160,6 +157,11 @@ export default function CreatePage() {
 
   // Sanityに保存
   const saveCosplayer = async () => {
+    if (!cosplayerData.name || !cosplayerData.twitterUsername) {
+      alert('名前とTwitterユーザー名は必須です')
+      return
+    }
+
     try {
       const response = await fetch('/api/save-cosplayer', {
         method: 'POST',
@@ -169,41 +171,25 @@ export default function CreatePage() {
         body: JSON.stringify(cosplayerData)
       })
 
+      const result = await response.json()
+
       if (response.ok) {
-        alert('コスプレイヤーが正常に保存されました！')
-        // リセットまたはリダイレクト
+        alert('🎉 コスプレイヤーが正常に保存されました！')
+        router.push('/')
       } else {
-        throw new Error('Save failed')
+        throw new Error(result.error || 'Save failed')
       }
-    } catch (error) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
       console.error('Save error:', error)
-      alert('保存に失敗しました')
+      alert(`保存に失敗しました: ${errorMessage}`)
     }
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-100">
       {/* Navigation */}
-      <Navbar isBordered className="bg-white/70 backdrop-blur-md">
-        <NavbarBrand>
-          <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
-            🌸 CosHub
-          </Link>
-        </NavbarBrand>
-        <NavbarContent justify="end">
-          <NavbarItem>
-            <Button
-              as={Link}
-              href="/"
-              color="secondary"
-              variant="flat"
-              size="sm"
-            >
-              ホームに戻る
-            </Button>
-          </NavbarItem>
-        </NavbarContent>
-      </Navbar>
+      <Header currentPage="create" />
 
       <main className="container mx-auto px-4 py-8">
         <div className="text-center mb-8">
@@ -273,9 +259,9 @@ export default function CreatePage() {
                             ></div>
                           </div>
                         )}
-                        {downloadProgress.isDownloading && (
+                        {downloadProgress.downloadedCount > 0 && (
                           <p className="text-xs text-gray-500 mt-1">
-                            {downloadProgress.downloadedCount} / {downloadProgress.totalImages} images
+                            {downloadProgress.downloadedCount} 枚の画像が見つかりました
                           </p>
                         )}
                       </div>
