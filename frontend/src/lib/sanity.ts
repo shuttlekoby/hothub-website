@@ -18,23 +18,23 @@ const builder = imageUrlBuilder(client)
 export const urlFor = (source: SanityImageSource) => builder.image(source)
 
 // GROQ queries
-export const postsQuery = `*[_type == "post" && defined(slug.current)] | order(_createdAt desc) {
+export const postsQuery = `*[_type == "post" && defined(slug.current)] | order(publishedAt desc) {
   _id,
   title,
   slug,
-  _createdAt,
-  excerpt,
-  coverImage,
-  "author": author->{name, image}
+  publishedAt,
+  mainImage,
+  "author": author->{name, image},
+  "categories": categories[]->{title, _id}
 }`
 
 export const postQuery = `*[_type == "post" && slug.current == $slug][0] {
   _id,
   title,
   slug,
-  _createdAt,
+  publishedAt,
   body,
-  excerpt,
-  coverImage,
-  "author": author->{name, image}
+  mainImage,
+  "author": author->{name, image},
+  "categories": categories[]->{title, _id}
 }`

@@ -9,9 +9,16 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@heroui/button": "^2.2.23",
+    "@heroui/card": "^2.2.22",
+    "@heroui/image": "^2.2.15",
+    "@heroui/navbar": "^2.2.21",
+    "@heroui/system": "^2.4.19",
+    "@heroui/theme": "^2.4.19",
     "@portabletext/react": "^3.2.1",
     "@sanity/client": "^7.8.0",
     "@sanity/image-url": "^1.1.0",
+    "framer-motion": "^12.23.6",
     "next": "15.4.2",
     "react": "19.1.0",
     "react-dom": "19.1.0"
