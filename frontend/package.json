@@ -9,11 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@heroui/accordion": "^2.2.20",
+    "@heroui/avatar": "^2.2.19",
     "@heroui/button": "^2.2.23",
     "@heroui/card": "^2.2.22",
+    "@heroui/dropdown": "^2.3.23",
     "@heroui/image": "^2.2.15",
+    "@heroui/input": "^2.4.24",
+    "@heroui/modal": "^2.2.20",
     "@heroui/navbar": "^2.2.21",
     "@heroui/system": "^2.4.19",
+    "@heroui/tabs": "^2.2.20",
     "@heroui/theme": "^2.4.19",
     "@portabletext/react": "^3.2.1",
     "@sanity/client": "^7.8.0",
